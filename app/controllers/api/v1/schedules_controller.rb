@@ -45,7 +45,7 @@ module Api
       end
 
       def schedule_params
-        params.require(:schedule).permit(:title, :schedule_date, :user_id)
+        params.require(:schedule).permit(:title, :schedule_date, :completion, :user_id)
       end
     end
   end
