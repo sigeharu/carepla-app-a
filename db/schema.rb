@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_12_092627) do
+ActiveRecord::Schema.define(version: 2021_08_12_142003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2021_08_12_092627) do
     t.datetime "schedule_date"
     t.boolean "completion", default: false
     t.boolean "takeover", default: false
+    t.boolean "time_none", default: false
     t.index ["user_id"], name: "index_schedules_on_user_id"
   end
 
