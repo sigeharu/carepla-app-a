@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_12_142003) do
+ActiveRecord::Schema.define(version: 2021_08_14_140756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,22 @@ ActiveRecord::Schema.define(version: 2021_08_12_142003) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_diaries_on_user_id"
+  end
+
+  create_table "group_users", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "partner_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["partner_id"], name: "index_group_users_on_partner_id"
+    t.index ["user_id"], name: "index_group_users_on_user_id"
+  end
+
+  create_table "partners", force: :cascade do |t|
+    t.string "partner_group", null: false
+    t.text "partner_group_description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -61,5 +77,7 @@ ActiveRecord::Schema.define(version: 2021_08_12_142003) do
   end
 
   add_foreign_key "diaries", "users"
+  add_foreign_key "group_users", "partners"
+  add_foreign_key "group_users", "users"
   add_foreign_key "schedules", "users"
 end
