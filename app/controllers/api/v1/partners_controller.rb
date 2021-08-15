@@ -28,6 +28,12 @@ module Api
         end
       end
 
+      def join
+        @partner = Partner.find(params[:id])
+        @partner.users << current_user
+        @partner.save
+      end
+
       def update
         partner = partner.find(params[:id])
         if partner.update(partner_params)

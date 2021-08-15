@@ -5,7 +5,11 @@ Rails.application.routes.draw do
       resources :test, only: %i[index]
       resources :diaries
       resources :schedules
-      resources :partners
+      resources :partners do
+        member do
+          get :join
+        end
+      end
 
       mount_devise_token_auth_for 'User', at: 'auth', controllers: {
         registrations: 'api/v1/auth/registrations'
