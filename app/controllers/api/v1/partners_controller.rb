@@ -6,8 +6,10 @@ module Api
 
       def index
         @partners = Partner.find(params[:partner_id])
-        @partners.group_users.each do |group_user|
-          group_user.user.name
+        if @partner.users.where(id: current_user)
+          @partners.group_users.each do |group_user|
+            group_user.user.name
+          end
         end
         render json: partners
       end
@@ -19,7 +21,7 @@ module Api
 
       def create
         @partner = Partner.new(partner_params)
-        if partner.save
+        if @partner.save
           render json: partner
         else
           render json: { status: 401, errors: '送信できませんでした!再度入力してください!' }
@@ -48,7 +50,7 @@ module Api
       end
 
       def partner_params
-        params.require(:partner).permit(:partner_group, :partner_group_description)
+        params.require(:partner).permit(:partner_group, :partner_group_description, :admin_user)
       end
     end
   end
