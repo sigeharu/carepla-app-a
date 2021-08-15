@@ -6,11 +6,10 @@ module Api
 
       def index
         @partners = Partner.find(params[:partner_id])
-        if @partner.users.where(id: current_user)
-          @partners.group_users.each do |group_user|
-            group_user.user.name
-          end
+        @partners.group_users.each do |group_user|
+          group_user.user.name
         end
+
         render json: partners
       end
 
