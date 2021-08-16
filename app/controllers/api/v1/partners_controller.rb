@@ -6,7 +6,7 @@ module Api
 
       def index
         group_users = []
-        @partners = Partner.find(1)
+        @partners = Partner.find(params[:partner_id])
         @partners.group_users.each do |group_user|
           group_users << group_user.user.name
         end
@@ -14,8 +14,13 @@ module Api
       end
 
       def show
-        partner = Partner.find(params[:id])
-        render json: partner
+        group_users = []
+        user = User.find(params[:id])
+        user.group_users.each do |group_user|
+          group_users << group_user.partner.partner_group
+          group_users << group_user.user.name
+        end
+        render json: group_users
       end
 
       def create
