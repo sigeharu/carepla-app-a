@@ -6,7 +6,7 @@ module Api
 
       def index
         group_users = []
-        @partners = Partner.find(params[:partner_id])
+        @partners = Partner.find(1)
         @partners.group_users.each do |group_user|
           group_users << group_user.user.name
         end
