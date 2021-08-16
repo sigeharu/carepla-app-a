@@ -17,7 +17,7 @@ module Api
         group_users = []
         user = User.find(params[:id])
         user.group_users.each do |group_user|
-          group_users << [group_users.partner.id, group_user.partner.partner_group, group_user.user.name]
+          group_users << [group_user.partner.id, group_user.partner.partner_group, group_user.user.name]
         end
         render json: group_users
       end
