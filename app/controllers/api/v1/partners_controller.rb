@@ -20,6 +20,7 @@ module Api
           group_users << {
             id: group_user.partner.id,
             partner_group: group_user.partner.partner_group,
+            partner_group_description: group_user.partner.partner_group_description,
             user_name: group_user.user.name
           }
         end
