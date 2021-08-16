@@ -5,10 +5,12 @@ module Api
     class PartnersController < ApplicationController
 
       def index
+        group_users = []
         @partners = Partner.find(params[:partner_id])
         @partners.group_users.each do |group_user|
-          render json: group_user.user.name
+          group_users << group_user.user.name
         end
+        render json: group_users
       end
 
       def show
