@@ -7,10 +7,8 @@ module Api
       def index
         @partners = Partner.find(params[:partner_id])
         @partners.group_users.each do |group_user|
-          group_user.user.name
+          render json: group_user.user.name
         end
-
-        render json: partners
       end
 
       def show
