@@ -15,8 +15,8 @@ module Api
 
       def show
         group_users = []
-        user = User.find(params[:id])
-        user.group_users.each do |group_user|
+        @user = User.find(params[:id])
+        @user.group_users.each do |group_user|
           group_users << {
             id: group_user.partner.id,
             partner_group: group_user.partner.partner_group,
@@ -28,9 +28,10 @@ module Api
       end
 
       def create
-        @partner = Partner.new(partner_params)
+        @user = User.find(params[:admin_user])
+        @partner = @user.partner.new(partner_params)
         if @partner.save
-          render json: partner
+          render json: @partner
         else
           render json: { status: 401, errors: '送信できませんでした!再度入力してください!' }
         end
