@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_15_030347) do
+ActiveRecord::Schema.define(version: 2021_08_28_041742) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "applies", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "partner_id"
+    t.text "comment"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "user_name"
+    t.integer "for_user"
+    t.index ["partner_id"], name: "index_applies_on_partner_id"
+    t.index ["user_id"], name: "index_applies_on_user_id"
+  end
+
+  create_table "approval_users", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "partner_approval_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["partner_approval_id"], name: "index_approval_users_on_partner_approval_id"
+    t.index ["user_id"], name: "index_approval_users_on_user_id"
+  end
 
   create_table "diaries", force: :cascade do |t|
     t.string "comment"
@@ -28,8 +49,18 @@ ActiveRecord::Schema.define(version: 2021_08_15_030347) do
     t.bigint "partner_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "group_admin", default: false
     t.index ["partner_id"], name: "index_group_users_on_partner_id"
     t.index ["user_id"], name: "index_group_users_on_user_id"
+  end
+
+  create_table "partner_approvals", force: :cascade do |t|
+    t.boolean "partner_approval", default: false
+    t.text "comment"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "from_user"
+    t.integer "for_user"
   end
 
   create_table "partners", force: :cascade do |t|
@@ -38,6 +69,7 @@ ActiveRecord::Schema.define(version: 2021_08_15_030347) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "admin_user", null: false
+    t.boolean "recruit_partner", default: false
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -77,6 +109,10 @@ ActiveRecord::Schema.define(version: 2021_08_15_030347) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "applies", "partners"
+  add_foreign_key "applies", "users"
+  add_foreign_key "approval_users", "partner_approvals"
+  add_foreign_key "approval_users", "users"
   add_foreign_key "diaries", "users"
   add_foreign_key "group_users", "partners"
   add_foreign_key "group_users", "users"

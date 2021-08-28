@@ -13,6 +13,39 @@ module Api
         render json: @group.to_json(include: [:partners])
       end
 
+      def search
+        @groups = Partner.eager_load(:users)
+                         .where(['partner_group like ? OR name like ?', "%#{params[:id]}%", "%#{params[:id]}%"])
+
+        # @search = @groups.map do |group|
+        #   {
+        #     id: group.id,
+        #     partner_group: group.partner_group,
+        #     partner_group_description: group.partner_group_description,
+        #     admin_user: group.admin_user,
+        #     recruit_partner: group.recruit_partner,
+        #     created_at: group.created_at,
+        #     updated_at: group.updated_at,
+        #     users:
+        #       group.users.map do |user|
+        #         {
+        #           id: user.id,
+        #           uid: user.uid,
+        #           provider: user.provider,
+        #           email: user.email,
+        #           name: user.name,
+        #           nickname: user.nickname,
+        #           image: user.image,
+        #           allowPasswordChange: user.allow_password_change,
+        #           created_at: user.created_at,
+        #           updated_at: user.updated_at
+        #         }
+        #       end
+        #   }
+        # end
+        render json: @groups.to_json(include: [:users])
+      end
+
       def show
         @user = User.find(params[:id])
         @group = @user.partners.includes(:users)
@@ -35,16 +68,6 @@ module Api
       def create
         @user = User.find(params[:admin_user])
         if @partner = @user.partners.create!(partner_params)
-          # @group = Partner.joins(:users).where(id: @partner.id)
-          #                 .select('partners.id,
-          #                        partners.partner_group,
-          #                        partner_group_description,
-          #                        partners.admin_user,
-          #                        partners.created_at,
-          #                        partners.updated_at,
-          #                        users.id AS user_id,
-          #                        users.name
-          #                       ')
           @group = @user.partners.includes(:users).last
           render json: @group.to_json(include: [:users])
         else
@@ -82,8 +105,16 @@ module Api
 
       private
 
+      def self.search(keyword)
+        where(['partner_group like ? OR name like ?', "%#{keyword}%", "%#{keyword}%"])
+      end
+
       def set_user
         @user = User.find(params[:id])
+      end
+
+      def search_params
+        params.permit(:keyword)
       end
 
       def join_params

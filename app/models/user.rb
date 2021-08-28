@@ -7,7 +7,10 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
   has_many :group_users, dependent: :destroy
+  has_many :applies, dependent: :destroy
   has_many :partners, through: :group_users
+  has_many :approval_users, dependent: :destroy
+  has_many :partner_approvals, through: :approval_users
   has_many :diary
   has_many :schedules
 end
