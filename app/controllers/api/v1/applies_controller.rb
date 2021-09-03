@@ -3,33 +3,27 @@ module Api
     class AppliesController < ApplicationController
 
       def index
-        @user = User.find(params[:partner_id])
-        # @applies = @user.partners.eager_load(apply: :user)
-        #                 .select(' partners.id,
-        #                           partners.partner_group,
-        #                           partners.admin_user,
-        #                           applies.user_id,
-        #                           applies.comment,
-        #                           applies.users.name
-        #                         ')
-        # @applies = @user.partners.eager_load(applies: :user)
         @apply = Apply.where(for_user: params[:partner_id])
-        @applies = @apply
-        render json: @applies
+        render json: @apply
+      end
+
+      def applying
+        @user = User.find(params[:id])
+        @applying = @user.applies
       end
 
       def show
         @user = User.find(params[:id])
-        @partner = Partner.find(params[:partner_id])
-        @apply = @user.partners.includes(:group_users).includes(:applies)
-
-        render json: @apply.to_json(include: %i[group_users applies users])
+        @apply = @user.applies.find_by(partner_id: params[:partner_id])
+        render json: @apply
       end
 
       def create
         @user = User.find(apply_params[:user_id])
         @user.applies.create(apply_params)
-
+        @groups = @user.partners.eager_load(:users)
+        @group_applies = @groups.eager_load(:applies)
+        # render json: @group_applies.to_json(include: [:users, :applies])
       end
 
       def destroy

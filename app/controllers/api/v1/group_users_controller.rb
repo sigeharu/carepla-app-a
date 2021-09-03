@@ -8,11 +8,10 @@ module Api
       end
 
       def create
-        @user = User.find(group_user_params[:user_id])
-        @user.group_users.create(partner_id: group_user_params[:partner_id],
-                                 user_id: group_user_params[:user_id],
-                                 group_admin: true)
-        Apply.find(group_user_params[:apply_id]).destroy!
+        @user = User.find(group_users_params[:user_id])
+        @user.group_users.create(partner_id: group_users_params[:partner_id],
+                                 user_id: group_users_params[:user_id])
+        Apply.find(group_users_params[:apply_id]).destroy!
       end
 
       def destroy
@@ -22,7 +21,7 @@ module Api
 
       private
 
-      def group_user_params
+      def group_users_params
         params.permit(:user_id, :partner_id, :apply_id)
       end
     end

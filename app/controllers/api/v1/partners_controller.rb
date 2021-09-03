@@ -5,64 +5,29 @@ module Api
     class PartnersController < ApplicationController
 
       def index
-        group_users = []
         @group = User.all.includes(:partners)
-        # @partners.users.each do |group_user|
-        #   group_users << group_user.user.name
-        # end
         render json: @group.to_json(include: [:partners])
       end
 
-      def search
-        @groups = Partner.eager_load(:users)
-                         .where(['partner_group like ? OR name like ?', "%#{params[:id]}%", "%#{params[:id]}%"])
+      # パートナーの計画作成用のパートナー一覧検索
+      def partner_index
+        @user = User.find(params[:id])
+        @partner_index = @user.partners.eager_load(:users)
+        render json: @partner_index.to_json(include: [:users])
+      end
 
-        # @search = @groups.map do |group|
-        #   {
-        #     id: group.id,
-        #     partner_group: group.partner_group,
-        #     partner_group_description: group.partner_group_description,
-        #     admin_user: group.admin_user,
-        #     recruit_partner: group.recruit_partner,
-        #     created_at: group.created_at,
-        #     updated_at: group.updated_at,
-        #     users:
-        #       group.users.map do |user|
-        #         {
-        #           id: user.id,
-        #           uid: user.uid,
-        #           provider: user.provider,
-        #           email: user.email,
-        #           name: user.name,
-        #           nickname: user.nickname,
-        #           image: user.image,
-        #           allowPasswordChange: user.allow_password_change,
-        #           created_at: user.created_at,
-        #           updated_at: user.updated_at
-        #         }
-        #       end
-        #   }
-        # end
-        render json: @groups.to_json(include: [:users])
+      def search
+        @group = Partner.eager_load(:users)
+                        .where(['partner_group like ? OR name like ?', "%#{params[:id]}%", "%#{params[:id]}%"])
+        @group_id = @group.map(&:id)
+        @groups = Partner.where(id: @group_id).eager_load(:users).eager_load(:applies)
+        render json: @groups.to_json(include: [:users, :applies])
       end
 
       def show
         @user = User.find(params[:id])
         @group = @user.partners.includes(:users)
-
         render json: @group.to_json(include: [:users])
-        # @user = User.find(params[:id])
-        # @group = @user.partners.joins(:users)
-        #               .select('partners.id,
-        #                          partners.partner_group,
-        #                          partner_group_description,
-        #                          partners.admin_user,
-        #                          partners.created_at,
-        #                          partners.updated_at,
-        #                          users.id AS user_id,
-        #                          users.name
-        #                         ')
-        # render json: @group
       end
 
       def create

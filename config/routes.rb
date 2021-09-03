@@ -7,10 +7,15 @@ Rails.application.routes.draw do
       resources :diaries
       resources :schedules
       resources :partners do
-        resources :applies
+        resources :applies do
+          member do
+            get :applying
+          end
+        end
         resources :group_users
         member do
           get :join
+          get :partner_index
           get :search
         end
       end
